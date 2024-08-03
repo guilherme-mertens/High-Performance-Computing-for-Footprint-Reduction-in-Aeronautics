@@ -11,13 +11,13 @@ from dolfinx.io import XDMFFile
 
 class ONERA:
     """
-    Classe para gerenciar a geração de malhas de aeronaves e resolver problemas de Stokes e Navier-Stokes.
+    Class to manage the generation of aircraft meshes and solve Stokes and Navier-Stokes problems.
     """
 
     def __init__(self) -> None:
         """
-        Inicializa a classe ONERA, configurando as soluções de Stokes e Navier-Stokes
-        e carregando o modelo de avião 3D da Concorde.
+        Initializes the ONERA class, setting up Stokes and Navier-Stokes solvers
+        and loading the 3D Concorde airplane model.
         """
         self.epsilon = 1e-5
         self.stokes = Stokes()
@@ -26,21 +26,21 @@ class ONERA:
 
     def generate_3d_concorde(self, attack_angle=0):
         """
-        Gera a malha 3D para a aeronave Concorde em um determinado ângulo de ataque.
+        Generates the 3D mesh for the Concorde aircraft at a given angle of attack.
 
-        :param attack_angle: Ângulo de ataque para a geração da malha.
-        :return: Malha 3D da aeronave Concorde.
+        :param attack_angle: Angle of attack for mesh generation.
+        :return: 3D mesh of the Concorde aircraft.
         """
         return self.airplane_3d_concorde.get_mesh(attack_angle)
 
     def solve_stokes(self, mesh, facets, inflow=None):
         """
-        Resolve o problema de Stokes para a malha e os facetas fornecidas.
+        Solves the Stokes problem for the given mesh and facets.
 
-        :param mesh: A malha para resolver o problema.
-        :param facets: Facetas da malha.
-        :param inflow: Função opcional para definir a velocidade de entrada.
-        :return: Resultados da solução do problema de Stokes.
+        :param mesh: The mesh to solve the problem on.
+        :param facets: Facets of the mesh.
+        :param inflow: Optional function to define the inflow velocity.
+        :return: Results of the Stokes problem solution.
         """
         if inflow:
             return self.stokes.solve(mesh, facets, inflow)
@@ -49,31 +49,31 @@ class ONERA:
 
     def solve_navier_stokes(self, mesh, facets):
         """
-        Resolve o problema de Navier-Stokes para a malha e os facetas fornecidas.
+        Solves the Navier-Stokes problem for the given mesh and facets.
 
-        :param mesh: A malha para resolver o problema.
-        :param facets: Facetas da malha.
-        :return: Resultados da solução do problema de Navier-Stokes.
+        :param mesh: The mesh to solve the problem on.
+        :param facets: Facets of the mesh.
+        :return: Results of the Navier-Stokes problem solution.
         """
         return self.navier_stokes.solve(mesh, facets)
 
     def solve_and_save_stokes(self, mesh, facets):
         """
-        Resolve e salva os resultados do problema de Stokes para a malha e facetas fornecidas.
+        Solves and saves the results of the Stokes problem for the given mesh and facets.
 
-        :param mesh: A malha para resolver o problema.
-        :param facets: Facetas da malha.
-        :return: Resultados da solução do problema de Stokes.
+        :param mesh: The mesh to solve the problem on.
+        :param facets: Facets of the mesh.
+        :return: Results of the Stokes problem solution.
         """
         return self.stokes.solve(mesh, facets)
 
     def solve_and_save_navier_stokes(self, mesh, facets):
         """
-        Resolve e salva os resultados do problema de Navier-Stokes para a malha e facetas fornecidas.
+        Solves and saves the results of the Navier-Stokes problem for the given mesh and facets.
 
-        :param mesh: A malha para resolver o problema.
-        :param facets: Facetas da malha.
-        :return: Resultados da solução do problema de Navier-Stokes.
+        :param mesh: The mesh to solve the problem on.
+        :param facets: Facets of the mesh.
+        :return: Results of the Navier-Stokes problem solution.
         """
         return self.navier_stokes.solve(mesh, facets)
 
@@ -81,14 +81,14 @@ class ONERA:
                                              angles: list = list(np.arange(-50, 50, 20)),
                                              inflow: Callable = lambda x: (np.stack((np.ones(x.shape[1]), np.zeros(x.shape[1]))))):
         """
-        Resolve e salva os resultados do problema de Stokes em uma faixa de ângulos de ataque.
+        Solves and saves the results of the Stokes problem over a range of angles of attack.
 
-        :param generare_airplane_function: Função para gerar a malha da aeronave.
-        :param save: Se deve salvar os resultados.
-        :param path: Caminho para salvar os resultados.
-        :param angles: Lista de ângulos de ataque para resolver.
-        :param inflow: Função para definir a velocidade de entrada.
-        :return: DataFrame com os resultados para cada ângulo.
+        :param generare_airplane_function: Function to generate the aircraft mesh.
+        :param save: Whether to save the results.
+        :param path: Path to save the results.
+        :param angles: List of angles of attack to solve for.
+        :param inflow: Function to define the inflow velocity.
+        :return: DataFrame with results for each angle.
         """
         comm = MPI.COMM_WORLD
         rank = comm.Get_rank()
@@ -134,9 +134,9 @@ class ONERA:
 
     def plot_stokes_results(self, path):
         """
-        Plota os resultados do problema de Stokes a partir de um arquivo CSV.
+        Plots the results of the Stokes problem from a CSV file.
 
-        :param path: Caminho do arquivo CSV com os resultados.
+        :param path: Path to the CSV file with the results.
         """
         df = pd.read_csv(path, index_col=0)
         fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(8, 8))

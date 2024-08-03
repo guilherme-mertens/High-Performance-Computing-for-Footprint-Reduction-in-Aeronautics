@@ -8,14 +8,14 @@ from dolfinx import io
 
 class Airplane2D:
     """
-    Classe para gerar a malha 2D de um avião a partir de um arquivo de silhueta.
+    Class to generate the 2D mesh of an aircraft from a silhouette file.
     
-    Atributos:
-        airplane_points (list): Pontos da silhueta do avião.
-        x_mean (float): Média das coordenadas x dos pontos da silhueta.
-        y_mean (float): Média das coordenadas y dos pontos da silhueta.
-        size (float): Tamanho da caixa de simulação.
-        lc (float): Tamanho da malha.
+    Attributes:
+        airplane_points (list): Points of the aircraft silhouette.
+        x_mean (float): Mean of the x coordinates of the silhouette points.
+        y_mean (float): Mean of the y coordinates of the silhouette points.
+        size (float): Size of the simulation box.
+        lc (float): Mesh size.
     """
     def __init__(self, silhouette_file, box_size=1, mesh_size=0.1, points_scale=3000, x_bias=0, y_bias=0) -> None:
         self.airplane_points, self.x_mean, self.y_mean = self.read_points(silhouette_file, points_scale, x_bias, y_bias)
@@ -24,15 +24,15 @@ class Airplane2D:
 
     def get_mesh(self, attack_angle):
         """
-        Gera a malha com um determinado ângulo de ataque.
+        Generates the mesh with a given angle of attack.
 
         Args:
-            attack_angle (float): Ângulo de ataque.
+            attack_angle (float): Angle of attack.
 
         Returns:
-            mesh (Mesh): Malha gerada.
-            cell_tags (MeshTags): Tags das células da malha.
-            facet_tags (MeshTags): Tags das facetas da malha.
+            mesh (Mesh): Generated mesh.
+            cell_tags (MeshTags): Tags for the mesh cells.
+            facet_tags (MeshTags): Tags for the mesh facets.
         """
         self.generate_mesh(attack_angle)
         mesh, cell_tags, facet_tags = model_to_mesh(gmsh.model, MPI.COMM_WORLD, 0, gdim=2)
@@ -41,16 +41,16 @@ class Airplane2D:
 
     def read_points(self, file, points_scale, x_bias, y_bias):
         """
-        Lê os pontos da silhueta do arquivo.
+        Reads the silhouette points from the file.
 
         Args:
-            file (str): Caminho para o arquivo CSV contendo os pontos da silhueta.
-            points_scale (float): Escala dos pontos.
-            x_bias (float): Deslocamento em x.
-            y_bias (float): Deslocamento em y.
+            file (str): Path to the CSV file containing the silhouette points.
+            points_scale (float): Scale of the points.
+            x_bias (float): Offset in x.
+            y_bias (float): Offset in y.
 
         Returns:
-            tuple: (pontos da silhueta, média x, média y)
+            tuple: (silhouette points, x mean, y mean)
         """
         points = pd.read_csv(file)
         points = points[["X", "Y"]]
@@ -65,34 +65,34 @@ class Airplane2D:
 
     def save_mesh(self, path):
         """
-        Salva a malha em um arquivo.
+        Saves the mesh to a file.
 
         Args:
-            path (str): Caminho para salvar a malha.
+            path (str): Path to save the mesh.
         """
         gmsh.write(path)
 
     def save_as_vtk(self):
-        """Salva a malha em formato VTK."""
+        """Saves the mesh in VTK format."""
         pass
 
     def plot_mesh(self):
-        """Plota a malha gerada."""
+        """Plots the generated mesh."""
         if '-nopopup' not in sys.argv:
             gmsh.fltk.run()
         gmsh.finalize()
 
     def rotate(self, points, angle, origin=(0, 0)):
         """
-        Rotaciona pontos em torno de uma origem.
+        Rotates points around a given origin.
 
         Args:
-            points (list): Lista de pontos a serem rotacionados.
-            angle (float): Ângulo de rotação em graus.
-            origin (tuple): Ponto de origem para a rotação.
+            points (list): List of points to be rotated.
+            angle (float): Rotation angle in degrees.
+            origin (tuple): Origin point for rotation.
 
         Returns:
-            list: Pontos rotacionados.
+            list: Rotated points.
         """
         angle_rad = math.radians(angle)
         ref_x, ref_y = origin
@@ -109,7 +109,7 @@ class Airplane2D:
         return rotated_points
 
     def generate_mesh(self, attack_angle):
-        """Gera a malha do avião com um determinado ângulo de ataque."""
+        """Generates the mesh of the airplane with a given angle of attack."""
         gmsh.initialize()
         gmsh.option.setNumber("General.Terminal", 0)
         gmsh.model.add("mesh")
@@ -163,3 +163,8 @@ if __name__ == "__main__":
     airplane = Airplane2D("final/airplane_2d/normal_concordia_2d_coordinates.csv")
     airplane.generate_mesh(attack_angle=-50)
     airplane.plot_mesh()
+
+
+
+
+
